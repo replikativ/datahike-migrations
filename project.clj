@@ -4,8 +4,8 @@
   :license {:name "EPL-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [ragtime/core "0.8.0"]]
+                 [ragtime/core "0.8.0"]
+                 [io.replikativ/datahike "0.3.2"]]
   :repl-options {:init-ns ragtime.datomic}
   :profiles
-  {:dev {:dependencies [[com.datomic/client-cloud "0.8.102"]
-                        [com.gearswithingears/shrubbery "0.4.1"]]}})
+  {:dev {:dependencies [[com.gearswithingears/shrubbery "0.4.1"]]}})
