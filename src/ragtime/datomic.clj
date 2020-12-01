@@ -1,3 +1,4 @@
+;; TODO: rename datomic to datahike
 (ns ragtime.datomic
   (:require [ragtime.protocols :as ragtime-protocol]
             [datahike.api :as datahike]))
