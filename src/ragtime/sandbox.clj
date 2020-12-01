@@ -5,24 +5,51 @@
 
 (comment
 
-  (def cfg {:store  {:backend :mem :id "sandbox"}
-            :keep-history? true
-            :schema-flexibility :read})
+  (do
+    (def cfg {:store  {:backend :mem :id "sandbox"}
+              :keep-history? true
+              ;; TODO: Make the full thing work when :write
+              :schema-flexibility :read})
 
-  (d/delete-database cfg)
+    (d/delete-database cfg)
 
-  (d/create-database cfg)
+    (def db (d/create-database cfg))
 
-  (def conn (d/connect cfg))
+    (def conn (d/connect cfg))
 
-  (def migration (rd/create-migration :id [:db/ident :inv/sku
-                                           :db/valueType :db.type/string
-                                           :db/unique :db.unique/identity
-                                           :db/cardinality :db.cardinality/one]))
+    (def migration-1 (rd/create-migration :id [{:db/ident       :inv/sku
+                                              :db/valueType   :db.type/string
+                                                :db/unique      :db.unique/identity
+                                                :db/cardinality :db.cardinality/one}]))
 
-  (def config
-    {:datastore  (rd/create-connection conn)
-     :migrations [migration]})
+    (def migration-2 (rd/create-migration :id-2 [{:db/ident       :inv/sku-2
+                                                :db/valueType   :db.type/string
+                                                :db/unique      :db.unique/identity
+                                                :db/cardinality :db.cardinality/one}]))
+    ;; At time 1
+    ;;
+    (def config
+          {:datastore  (rd/create-connection conn)
+           :migrations [migration-1 migration-2]})
+
+    )
 
   (repl/migrate config)
+
+  (d/datoms @conn {:index :eavt})
+
+
+  ;; At time 2
+  ;;
+  (def migration-3 (rd/create-migration :id-3 [{:db/ident       :inv/sku-3
+                                                :db/valueType   :db.type/string
+                                                :db/unique      :db.unique/identity
+                                                :db/cardinality :db.cardinality/one}]))
+  (def config
+    {:datastore  (rd/create-connection conn)
+     :migrations [migration-1 migration-2 migration-3]})
+
+  (repl/migrate config)
+
+  (d/datoms @conn {:index :eavt})
   )
